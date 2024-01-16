@@ -1,17 +1,11 @@
 
-import torch
 
-import argparse, os 
-import numpy as np
-
+import argparse
 from keras import backend as K
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D, AveragePooling2D
 from keras.optimizers import Adam
-
 from sklearn.model_selection import train_test_split
-
-
 import sagemaker
 import argparse
 import os
@@ -19,6 +13,11 @@ import numpy as np
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
+
+# Define the CHECKPOINTS_DIR
+CHECKPOINTS_DIR = '/opt/ml/checkpoints'
+checkpoints_enabled = os.path.exists(CHECKPOINTS_DIR)
+best_accuracy = 0.0
 
 
 if __name__ == '__main__': 
@@ -149,7 +148,10 @@ if __name__ == '__main__':
         epochs=epochs,
         verbose=2
     )
-
+ 
+    model.save('model.h5')
+    logging.info("Training script completed.")
+    
     score = model.evaluate(test_generator, verbose=0)
     print('Validation loss    :', score[0])
     print('Validation accuracy:', score[1])
